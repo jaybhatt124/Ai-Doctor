@@ -1,0 +1,475 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Admin Dashboard — AI Doctor Analysis</title>
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<div class="admin-wrap">
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <div class="sb-hdr">
+      <div class="sb-logo">⚕️</div>
+      <div><div class="sb-title">AI Doctor</div><div class="sb-sub">Admin Panel</div></div>
+    </div>
+    <nav class="sb-nav">
+      <button class="sb-link active" onclick="goTab('dashboard')" id="tab-dashboard">📊 Dashboard</button>
+      <button class="sb-link" onclick="goTab('illnesses')" id="tab-illnesses">🦠 Illnesses</button>
+      <button class="sb-link" onclick="goTab('doctors')" id="tab-doctors">👨‍⚕️ Doctors</button>
+      <button class="sb-link" onclick="goTab('messages')" id="tab-messages">💬 Messages <span class="sb-badge" id="msg-badge" style="display:none">0</span></button>
+    </nav>
+    <div class="sb-foot">
+      <div class="sb-user" id="sb-user">Admin Panel</div>
+      <button class="btn-logout" onclick="doLogout()">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+        Logout
+      </button>
+    </div>
+  </aside>
+
+  <!-- MAIN -->
+  <main class="admin-main">
+    <div class="adm-topbar">
+      <h2 id="topbar-title">Dashboard Overview</h2>
+      <div style="display:flex;align-items:center;gap:12px">
+        <span id="topbar-date" style="font-size:13px;color:var(--tx-m)"></span>
+        <button class="btn-vs" onclick="window.location.href='index.html'">← View Website</button>
+      </div>
+    </div>
+
+    <!-- DASHBOARD TAB -->
+    <div class="adm-tab active" id="atab-dashboard">
+      <div class="stats-grid">
+        <div class="stat-card blue"><div class="stat-ico">🦠</div><div class="stat-num" id="s-ill">0</div><div class="stat-lbl">Active Illnesses</div></div>
+        <div class="stat-card green"><div class="stat-ico">👨‍⚕️</div><div class="stat-num" id="s-doc">0</div><div class="stat-lbl">Registered Doctors</div></div>
+        <div class="stat-card purple"><div class="stat-ico">💬</div><div class="stat-num" id="s-msg">0</div><div class="stat-lbl">Total Messages</div></div>
+        <div class="stat-card orange"><div class="stat-ico">🏥</div><div class="stat-num">10</div><div class="stat-lbl">Body Regions</div></div>
+      </div>
+      <div class="welcome-card">
+        <div class="welcome-ico">👋</div>
+        <div>
+          <h3>Welcome to Admin Dashboard</h3>
+          <p>Add or remove illness information and doctor details. Changes are <strong>instantly visible to users</strong> when they click body parts on the website. Use the sidebar to navigate between Illnesses and Doctors management.</p>
+          <p style="margin-top:10px;font-size:13px;color:var(--tx-m)">💡 <strong>Tip:</strong> When you add an illness for "Feet", users who click the Feet region will see it immediately.</p>
+        </div>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:14px;margin-top:22px">
+        <div onclick="goTab('illnesses')" style="background:#fff;border:1.5px solid var(--g100);border-radius:var(--r);padding:22px;text-align:center;cursor:pointer;transition:all .2s" onmouseover="this.style.boxShadow='var(--sh-lg)'" onmouseout="this.style.boxShadow='none'">
+          <div style="font-size:30px;margin-bottom:8px">🦠</div><div style="font-weight:600;color:var(--pr);font-size:14px">Manage Illnesses</div>
+        </div>
+        <div onclick="goTab('doctors')" style="background:#fff;border:1.5px solid var(--g100);border-radius:var(--r);padding:22px;text-align:center;cursor:pointer;transition:all .2s" onmouseover="this.style.boxShadow='var(--sh-lg)'" onmouseout="this.style.boxShadow='none'">
+          <div style="font-size:30px;margin-bottom:8px">👨‍⚕️</div><div style="font-weight:600;color:var(--pr);font-size:14px">Manage Doctors</div>
+        </div>
+        <div onclick="goTab('messages')" style="background:#fff;border:1.5px solid var(--g100);border-radius:var(--r);padding:22px;text-align:center;cursor:pointer;transition:all .2s" onmouseover="this.style.boxShadow='var(--sh-lg)'" onmouseout="this.style.boxShadow='none'">
+          <div style="font-size:30px;margin-bottom:8px">💬</div><div style="font-weight:600;color:var(--pr);font-size:14px">View Messages</div>
+        </div>
+        <a href="illness.html?part=head" target="_blank" style="background:#fff;border:1.5px solid var(--g100);border-radius:var(--r);padding:22px;text-align:center;cursor:pointer;transition:all .2s;text-decoration:none" onmouseover="this.style.boxShadow='var(--sh-lg)'" onmouseout="this.style.boxShadow='none'">
+          <div style="font-size:30px;margin-bottom:8px">👁️</div><div style="font-weight:600;color:var(--pr);font-size:14px">Preview Site</div>
+        </a>
+      </div>
+    </div>
+
+    <!-- ILLNESSES TAB -->
+    <div class="adm-tab" id="atab-illnesses">
+      <div class="sec-hdr">
+        <h3>Manage Illnesses</h3>
+        <button class="btn btn-pr btn-sm" onclick="openModal('ill-modal')">+ Add Illness</button>
+      </div>
+      <div class="tbl-wrap" id="ill-tbl"></div>
+    </div>
+
+    <!-- DOCTORS TAB -->
+    <div class="adm-tab" id="atab-doctors">
+      <div class="sec-hdr">
+        <h3>Manage Doctors</h3>
+        <button class="btn btn-pr btn-sm" onclick="openModal('doc-modal')">+ Add Doctor</button>
+      </div>
+      <div class="tbl-wrap" id="doc-tbl"></div>
+    </div>
+
+    <!-- MESSAGES TAB -->
+    <div class="adm-tab" id="atab-messages">
+      <div class="sec-hdr"><h3>Contact Messages</h3></div>
+      <div class="tbl-wrap" id="msg-tbl"></div>
+    </div>
+  </main>
+</div>
+
+<!-- ADD ILLNESS MODAL -->
+<div class="modal-overlay" id="ill-modal">
+  <div class="modal">
+    <div class="m-hdr"><h3 id="ill-modal-title">Add New Illness</h3><button class="m-close" onclick="closeModal('ill-modal')">✕</button></div>
+    <form onsubmit="saveIllness(event)">
+      <div class="m-body">
+        <div class="fg">
+          <label>Body Part *</label>
+          <select id="ill-part" required>
+            <option value="">Select body part...</option>
+            <option value="head">Head</option>
+            <option value="neck">Neck</option>
+            <option value="shoulders">Shoulders</option>
+            <option value="chest">Chest</option>
+            <option value="stomach">Stomach</option>
+            <option value="arms">Arms</option>
+            <option value="back">Back</option>
+            <option value="knees">Knees</option>
+            <option value="legs">Legs</option>
+            <option value="feet">Feet</option>
+          </select>
+        </div>
+        <div class="fg"><label>Illness Name *</label><input type="text" id="ill-name" placeholder="e.g. Migraine" required></div>
+        <div class="fg"><label>Description *</label><textarea id="ill-desc" rows="3" placeholder="Describe the illness in detail..." required></textarea></div>
+        <div class="fg">
+          <label>Symptoms (one per line) *</label>
+          <textarea id="ill-symptoms" rows="4" placeholder="Throbbing pain on one side&#10;Nausea and vomiting&#10;Sensitivity to light&#10;Dizziness" required></textarea>
+        </div>
+        <div class="fg">
+          <label>Care Tips (one per line) *</label>
+          <textarea id="ill-care" rows="4" placeholder="Rest in a dark quiet room&#10;Stay well hydrated&#10;Apply cold compress" required></textarea>
+        </div>
+        <div class="frow">
+          <div class="fg">
+            <label>Severity</label>
+            <select id="ill-sev">
+              <option value="mild">Mild</option>
+              <option value="moderate" selected>Moderate</option>
+              <option value="severe">Severe</option>
+            </select>
+          </div>
+          <div class="fg">
+            <label>Medicine Name</label>
+            <input type="text" id="ill-med-name" placeholder="e.g. Ibuprofen">
+          </div>
+        </div>
+        <div class="fg"><label>Medicine Info / Dosage</label><input type="text" id="ill-med-info" placeholder="400mg with food every 6-8 hours"></div>
+        <div class="fg">
+          <label>Medicine Type</label>
+          <select id="ill-med-otc">
+            <option value="true">Over-the-Counter (OTC)</option>
+            <option value="false">Prescription Required</option>
+          </select>
+        </div>
+        <input type="hidden" id="ill-edit-id" value="">
+      </div>
+      <div class="m-foot">
+        <button type="button" class="btn btn-gh btn-sm" onclick="closeModal('ill-modal')">Cancel</button>
+        <button type="submit" class="btn btn-pr btn-sm" id="ill-save-btn">Save Illness</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- ADD DOCTOR MODAL -->
+<div class="modal-overlay" id="doc-modal">
+  <div class="modal">
+    <div class="m-hdr"><h3 id="doc-modal-title">Add New Doctor</h3><button class="m-close" onclick="closeModal('doc-modal')">✕</button></div>
+    <form onsubmit="saveDoctor(event)">
+      <div class="m-body">
+        <div class="fg">
+          <label>Body Part (Specialises In) *</label>
+          <select id="doc-part" required>
+            <option value="">Select body part...</option>
+            <option value="head">Head</option>
+            <option value="neck">Neck</option>
+            <option value="shoulders">Shoulders</option>
+            <option value="chest">Chest</option>
+            <option value="stomach">Stomach</option>
+            <option value="arms">Arms</option>
+            <option value="back">Back</option>
+            <option value="knees">Knees</option>
+            <option value="legs">Legs</option>
+            <option value="feet">Feet</option>
+          </select>
+        </div>
+        <div class="frow">
+          <div class="fg"><label>Doctor Name *</label><input type="text" id="doc-name" placeholder="Dr. John Smith" required></div>
+          <div class="fg"><label>Specialization *</label><input type="text" id="doc-spec" placeholder="Neurologist" required></div>
+        </div>
+        <div class="fg"><label>Hospital / Clinic</label><input type="text" id="doc-hosp" placeholder="City Medical Center"></div>
+        <div class="frow">
+          <div class="fg"><label>Phone Number</label><input type="text" id="doc-phone" placeholder="+1-555-0000"></div>
+          <div class="fg"><label>Email Address</label><input type="email" id="doc-email" placeholder="doctor@hospital.com"></div>
+        </div>
+        <div class="fg"><label>Years of Experience</label><input type="number" id="doc-exp" placeholder="10" min="0" max="60"></div>
+        <input type="hidden" id="doc-edit-id" value="">
+      </div>
+      <div class="m-foot">
+        <button type="button" class="btn btn-gh btn-sm" onclick="closeModal('doc-modal')">Cancel</button>
+        <button type="submit" class="btn btn-pr btn-sm">Save Doctor</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<div id="toast" class="toast"></div>
+<script src="js/data.js"></script>
+<script>
+// Auth guard
+if (!isAdminLoggedIn()) window.location.href = 'admin-login.html';
+
+const PART_LABELS = {
+  head:'Head', neck:'Neck', shoulders:'Shoulders', chest:'Chest',
+  stomach:'Stomach', arms:'Arms', back:'Back', knees:'Knees', legs:'Legs', feet:'Feet'
+};
+
+document.getElementById('topbar-date').textContent = new Date().toLocaleDateString('en-US',{weekday:'short',year:'numeric',month:'short',day:'numeric'});
+
+function doLogout() {
+  adminLogout();
+  window.location.href = 'index.html';
+}
+
+// ── TAB NAVIGATION ──
+function goTab(name) {
+  document.querySelectorAll('.adm-tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.sb-link').forEach(l => l.classList.remove('active'));
+  document.getElementById('atab-' + name).classList.add('active');
+  document.getElementById('tab-' + name).classList.add('active');
+  const titles = {dashboard:'Dashboard Overview', illnesses:'Manage Illnesses', doctors:'Manage Doctors', messages:'Contact Messages'};
+  document.getElementById('topbar-title').textContent = titles[name] || 'Admin';
+  if (name === 'illnesses') renderIllnesses();
+  if (name === 'doctors')   renderDoctors();
+  if (name === 'messages')  renderMessages();
+  if (name === 'dashboard') updateStats();
+}
+
+function updateStats() {
+  document.getElementById('s-ill').textContent = getIllnesses().length;
+  document.getElementById('s-doc').textContent = getDoctors().length;
+  const msgs = getData('messages', []);
+  document.getElementById('s-msg').textContent = msgs.length;
+  const unread = msgs.filter(m => !m.read).length;
+  const badge = document.getElementById('msg-badge');
+  badge.textContent = unread;
+  badge.style.display = unread > 0 ? '' : 'none';
+}
+updateStats();
+
+// ── ILLNESSES ──
+function renderIllnesses() {
+  const ill = getIllnesses();
+  const el = document.getElementById('ill-tbl');
+  if (!ill.length) {
+    el.innerHTML = '<div class="empty-st"><div class="ei">🦠</div><p>No illnesses yet. Click "+ Add Illness" to begin.</p></div>';
+    return;
+  }
+  el.innerHTML = `<table class="adm-tbl">
+    <thead><tr><th>#</th><th>Body Part</th><th>Illness Name</th><th>Severity</th><th>Medicines</th><th>Actions</th></tr></thead>
+    <tbody>${ill.map((i,idx) => `<tr>
+      <td style="color:var(--tx-m)">${idx+1}</td>
+      <td><span style="background:var(--g100);padding:2px 10px;border-radius:12px;font-size:12px;font-weight:600">${PART_LABELS[i.bodyPart]||i.bodyPart}</span></td>
+      <td><strong>${esc(i.name)}</strong><div style="font-size:12px;color:var(--tx-m);margin-top:2px">${esc((i.description||'').substring(0,60))}...</div></td>
+      <td><span class="sev ${i.severity||'mild'}">${i.severity||'mild'}</span></td>
+      <td style="font-size:12px;color:var(--tx-m)">${(i.medicines||[]).map(m=>m.name).join(', ')||'—'}</td>
+      <td style="display:flex;gap:6px;flex-wrap:wrap">
+        <button class="btn btn-sm" style="background:var(--g100);border:none;color:var(--pr);padding:5px 10px;border-radius:5px;font-size:12px" onclick="editIllness(${i.id})">✏️ Edit</button>
+        <button class="btn btn-red btn-sm" onclick="deleteIllness(${i.id})">🗑 Delete</button>
+        <a href="illness.html?part=${i.bodyPart}" target="_blank" class="btn btn-sm" style="background:#e8f4ff;border:none;color:var(--pr);padding:5px 10px;border-radius:5px;font-size:12px;text-decoration:none">👁 View</a>
+      </td>
+    </tr>`).join('')}</tbody>
+  </table>`;
+}
+
+function saveIllness(e) {
+  e.preventDefault();
+  const editId = document.getElementById('ill-edit-id').value;
+  const symptoms = document.getElementById('ill-symptoms').value.trim().split('\n').map(s=>s.trim()).filter(Boolean);
+  const careTips = document.getElementById('ill-care').value.trim().split('\n').map(s=>s.trim()).filter(Boolean);
+  const medName  = document.getElementById('ill-med-name').value.trim();
+  const medicines = medName ? [{
+    name: medName,
+    info: document.getElementById('ill-med-info').value.trim(),
+    otc:  document.getElementById('ill-med-otc').value === 'true'
+  }] : [];
+
+  const illnesses = getIllnesses();
+
+  if (editId) {
+    // Update existing
+    const idx = illnesses.findIndex(x => String(x.id) === String(editId));
+    if (idx > -1) {
+      illnesses[idx] = { ...illnesses[idx],
+        bodyPart: document.getElementById('ill-part').value,
+        name:     document.getElementById('ill-name').value.trim(),
+        description: document.getElementById('ill-desc').value.trim(),
+        symptoms, careTips, severity: document.getElementById('ill-sev').value,
+        medicines
+      };
+      saveIllnesses(illnesses);
+      showToast('Illness updated successfully!', 'success');
+    }
+  } else {
+    // New
+    illnesses.push({
+      id: nextId(illnesses),
+      bodyPart:    document.getElementById('ill-part').value,
+      name:        document.getElementById('ill-name').value.trim(),
+      description: document.getElementById('ill-desc').value.trim(),
+      symptoms, careTips,
+      severity: document.getElementById('ill-sev').value,
+      medicines
+    });
+    saveIllnesses(illnesses);
+    showToast('Illness added! Users will now see it when they click that body part.', 'success');
+  }
+
+  closeModal('ill-modal');
+  resetIllForm();
+  renderIllnesses();
+  updateStats();
+}
+
+function editIllness(id) {
+  const ill = getIllnesses().find(x => x.id === id);
+  if (!ill) return;
+  document.getElementById('ill-modal-title').textContent = 'Edit Illness';
+  document.getElementById('ill-edit-id').value = id;
+  document.getElementById('ill-part').value     = ill.bodyPart;
+  document.getElementById('ill-name').value     = ill.name;
+  document.getElementById('ill-desc').value     = ill.description;
+  document.getElementById('ill-symptoms').value = (ill.symptoms||[]).join('\n');
+  document.getElementById('ill-care').value     = (ill.careTips||[]).join('\n');
+  document.getElementById('ill-sev').value      = ill.severity||'moderate';
+  const firstMed = (ill.medicines||[])[0];
+  document.getElementById('ill-med-name').value = firstMed ? firstMed.name : '';
+  document.getElementById('ill-med-info').value = firstMed ? firstMed.info : '';
+  document.getElementById('ill-med-otc').value  = firstMed ? String(firstMed.otc) : 'true';
+  openModal('ill-modal');
+}
+
+function deleteIllness(id) {
+  if (!confirm('Delete this illness? It will no longer appear for users.')) return;
+  saveIllnesses(getIllnesses().filter(x => x.id !== id));
+  renderIllnesses();
+  updateStats();
+  showToast('Illness deleted.', 'success');
+}
+
+function resetIllForm() {
+  document.getElementById('ill-modal-title').textContent = 'Add New Illness';
+  document.getElementById('ill-edit-id').value = '';
+  ['ill-part','ill-name','ill-desc','ill-symptoms','ill-care','ill-med-name','ill-med-info'].forEach(id => document.getElementById(id).value = '');
+  document.getElementById('ill-sev').value = 'moderate';
+  document.getElementById('ill-med-otc').value = 'true';
+}
+
+// ── DOCTORS ──
+function renderDoctors() {
+  const docs = getDoctors();
+  const el = document.getElementById('doc-tbl');
+  if (!docs.length) {
+    el.innerHTML = '<div class="empty-st"><div class="ei">👨‍⚕️</div><p>No doctors yet. Click "+ Add Doctor" to begin.</p></div>';
+    return;
+  }
+  el.innerHTML = `<table class="adm-tbl">
+    <thead><tr><th>#</th><th>Name</th><th>Specialization</th><th>Body Part</th><th>Hospital</th><th>Contact</th><th>Actions</th></tr></thead>
+    <tbody>${docs.map((d,idx)=>`<tr>
+      <td style="color:var(--tx-m)">${idx+1}</td>
+      <td><strong>${esc(d.name)}</strong></td>
+      <td>${esc(d.spec)}</td>
+      <td><span style="background:var(--g100);padding:2px 10px;border-radius:12px;font-size:12px;font-weight:600">${PART_LABELS[d.bodyPart]||d.bodyPart}</span></td>
+      <td style="font-size:12px;color:var(--tx-m)">${esc(d.hospital||'—')}</td>
+      <td style="font-size:12px">${d.phone?`<div>${esc(d.phone)}</div>`:''}${d.email?`<div style="color:var(--pr-l)">${esc(d.email)}</div>`:''}</td>
+      <td style="display:flex;gap:6px;flex-wrap:wrap">
+        <button class="btn btn-sm" style="background:var(--g100);border:none;color:var(--pr);padding:5px 10px;border-radius:5px;font-size:12px" onclick="editDoctor(${d.id})">✏️ Edit</button>
+        <button class="btn btn-red btn-sm" onclick="deleteDoctor(${d.id})">🗑 Delete</button>
+        <a href="illness.html?part=${d.bodyPart}" target="_blank" class="btn btn-sm" style="background:#e8f4ff;border:none;color:var(--pr);padding:5px 10px;border-radius:5px;font-size:12px;text-decoration:none">👁 View</a>
+      </td>
+    </tr>`).join('')}</tbody>
+  </table>`;
+}
+
+function saveDoctor(e) {
+  e.preventDefault();
+  const editId = document.getElementById('doc-edit-id').value;
+  const docs = getDoctors();
+
+  const entry = {
+    bodyPart: document.getElementById('doc-part').value,
+    name:     document.getElementById('doc-name').value.trim(),
+    spec:     document.getElementById('doc-spec').value.trim(),
+    hospital: document.getElementById('doc-hosp').value.trim(),
+    phone:    document.getElementById('doc-phone').value.trim(),
+    email:    document.getElementById('doc-email').value.trim(),
+    exp:      parseInt(document.getElementById('doc-exp').value)||0
+  };
+
+  if (editId) {
+    const idx = docs.findIndex(x => String(x.id) === String(editId));
+    if (idx > -1) { docs[idx] = { ...docs[idx], ...entry }; saveDoctors(docs); showToast('Doctor updated!', 'success'); }
+  } else {
+    entry.id = nextId(docs);
+    docs.push(entry);
+    saveDoctors(docs);
+    showToast('Doctor added! They will now appear on the relevant body part page.', 'success');
+  }
+
+  closeModal('doc-modal');
+  resetDocForm();
+  renderDoctors();
+  updateStats();
+}
+
+function editDoctor(id) {
+  const d = getDoctors().find(x => x.id === id);
+  if (!d) return;
+  document.getElementById('doc-modal-title').textContent = 'Edit Doctor';
+  document.getElementById('doc-edit-id').value = id;
+  document.getElementById('doc-part').value  = d.bodyPart;
+  document.getElementById('doc-name').value  = d.name;
+  document.getElementById('doc-spec').value  = d.spec;
+  document.getElementById('doc-hosp').value  = d.hospital||'';
+  document.getElementById('doc-phone').value = d.phone||'';
+  document.getElementById('doc-email').value = d.email||'';
+  document.getElementById('doc-exp').value   = d.exp||'';
+  openModal('doc-modal');
+}
+
+function deleteDoctor(id) {
+  if (!confirm('Delete this doctor? They will no longer appear for users.')) return;
+  saveDoctors(getDoctors().filter(x => x.id !== id));
+  renderDoctors();
+  updateStats();
+  showToast('Doctor deleted.', 'success');
+}
+
+function resetDocForm() {
+  document.getElementById('doc-modal-title').textContent = 'Add New Doctor';
+  document.getElementById('doc-edit-id').value = '';
+  ['doc-part','doc-name','doc-spec','doc-hosp','doc-phone','doc-email','doc-exp'].forEach(id => document.getElementById(id).value = '');
+}
+
+// ── MESSAGES ──
+function renderMessages() {
+  const msgs = getData('messages', []);
+  const el = document.getElementById('msg-tbl');
+  if (!msgs.length) {
+    el.innerHTML = '<div class="empty-st"><div class="ei">💬</div><p>No messages yet.</p></div>';
+    return;
+  }
+  const sorted = [...msgs].reverse();
+  el.innerHTML = `<table class="adm-tbl">
+    <thead><tr><th>Name</th><th>Email</th><th>Message</th><th>Date</th><th>Action</th></tr></thead>
+    <tbody>${sorted.map(m=>`<tr>
+      <td><strong>${esc(m.name)}</strong></td>
+      <td><a href="mailto:${esc(m.email)}" style="color:var(--pr-l)">${esc(m.email)}</a></td>
+      <td style="max-width:300px"><div style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:13px">${esc(m.message)}</div></td>
+      <td style="font-size:12px;color:var(--tx-m)">${esc(m.date||'')}</td>
+      <td><button class="btn btn-red btn-sm" onclick="deleteMsg(${m.id})">🗑</button></td>
+    </tr>`).join('')}</tbody>
+  </table>`;
+  updateStats();
+}
+
+function deleteMsg(id) {
+  if (!confirm('Delete this message?')) return;
+  const msgs = getData('messages', []).filter(m => m.id !== id);
+  saveData('messages', msgs);
+  renderMessages();
+  showToast('Message deleted.', 'success');
+}
+</script>
+</body>
+</html>
