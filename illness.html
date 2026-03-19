@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Illness Database - AI Doctor Analysis</title>
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+
+  <div class="nav-overlay" id="navOverlay"></div>
+
+  <nav class="navbar">
+    <div class="navbar-container">
+      <a href="index.html" class="navbar-brand">
+        <div class="brand-icon">
+          <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 14H9V8h2v8zm4 0h-2V8h2v8z"/>
+          </svg>
+        </div>
+        <div class="brand-text">
+          <span class="brand-name">AI Doctor Analysis</span>
+          <span class="brand-tagline">Smart Health Education</span>
+        </div>
+      </a>
+      <button class="hamburger" id="hamburger" aria-label="Toggle menu" aria-expanded="false">
+        <span></span><span></span><span></span>
+      </button>
+      <ul class="navbar-links" id="navLinks">
+        <li><a href="index.html">🏠 Home</a></li>
+        <li><a href="about.html">ℹ️ About</a></li>
+        <li><a href="illness.html">🩺 Illness Info</a></li>
+        <li><a href="tips.html">💡 Health Tips</a></li>
+        <li><a href="contact.html">📬 Contact</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <main class="page-content">
+
+    <div class="page-header">
+      <h1>🩺 Illness Database</h1>
+      <p>Explore common illnesses with symptoms, causes, treatments, and prevention tips.</p>
+    </div>
+
+    <section class="section">
+      <div class="container">
+
+        <!-- Search -->
+        <div style="margin-bottom:20px;">
+          <input type="text" id="illnessSearch" placeholder="🔍 Search illnesses..." oninput="filterIllnesses()"
+            style="width:100%;max-width:400px;padding:11px 16px;border:1.5px solid #d0e8ec;border-radius:10px;font-family:Poppins,sans-serif;font-size:0.9rem;outline:none;" />
+        </div>
+
+        <!-- Filter Bar -->
+        <div class="filter-bar" id="filterBar">
+          <button class="filter-btn active" onclick="setFilter('all', this)">All</button>
+          <button class="filter-btn" onclick="setFilter('respiratory', this)">🫁 Respiratory</button>
+          <button class="filter-btn" onclick="setFilter('viral', this)">🦠 Viral</button>
+          <button class="filter-btn" onclick="setFilter('cardiovascular', this)">❤️ Cardiovascular</button>
+          <button class="filter-btn" onclick="setFilter('metabolic', this)">⚡ Metabolic</button>
+          <button class="filter-btn" onclick="setFilter('neurological', this)">🧠 Neurological</button>
+          <button class="filter-btn" onclick="setFilter('digestive', this)">🍽️ Digestive</button>
+          <button class="filter-btn" onclick="setFilter('mental', this)">😰 Mental</button>
+          <button class="filter-btn" onclick="setFilter('skin', this)">🩹 Skin</button>
+          <button class="filter-btn" onclick="setFilter('parasitic', this)">🦟 Parasitic</button>
+        </div>
+
+        <div class="cards-grid" id="illnessGrid"></div>
+
+      </div>
+    </section>
+
+    <!-- Modal -->
+    <div id="modal" style="display:none;position:fixed;inset:0;background:rgba(0,80,95,0.45);backdrop-filter:blur(3px);z-index:2000;align-items:center;justify-content:center;padding:20px;">
+      <div id="modalBox" style="background:white;border-radius:18px;padding:28px;max-width:540px;width:100%;max-height:90vh;overflow-y:auto;position:relative;box-shadow:0 20px 60px rgba(0,80,95,0.3);">
+        <button onclick="closeModal()" style="position:absolute;top:16px;right:16px;background:var(--primary-light);border:none;width:34px;height:34px;border-radius:8px;cursor:pointer;font-size:1.1rem;">✕</button>
+        <div id="modalContent"></div>
+      </div>
+    </div>
+
+  </main>
+
+  <footer>
+    <p>&copy; 2025 AI Doctor Analysis &mdash; <a href="about.html">About</a> &bull; <a href="contact.html">Contact</a></p>
+  </footer>
+
+  <script src="js/data.js"></script>
+  <script src="js/navbar.js"></script>
+  <script>
+    let currentFilter = 'all';
+    let currentSearch = '';
+
+    const severityColor = { mild: '#4caf50', moderate: '#ff9800', severe: '#f44336', chronic: '#9c27b0' };
+
+    function renderIllnesses() {
+      const grid = document.getElementById('illnessGrid');
+      let list = healthData.illnesses.filter(ill => {
+        const matchFilter = currentFilter === 'all' || ill.category === currentFilter;
+        const matchSearch = ill.name.toLowerCase().includes(currentSearch) ||
+                            ill.symptoms.some(s => s.toLowerCase().includes(currentSearch));
+        return matchFilter && matchSearch;
+      });
+
+      if (list.length === 0) {
+        grid.innerHTML = '<p style="color:var(--text-light);">No illnesses found matching your search.</p>';
+        return;
+      }
+
+      grid.innerHTML = list.map(ill => `
+        <div class="card" onclick="openModal(${ill.id})" style="cursor:pointer;">
+          <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:12px;">
+            <div class="card-icon" style="margin-bottom:0;">${ill.emoji}</div>
+            <span style="font-size:0.75rem;font-weight:600;color:${severityColor[ill.severity] || '#888'};background:${severityColor[ill.severity]}18;padding:4px 10px;border-radius:20px;">${ill.severity}</span>
+          </div>
+          <h3 style="margin-bottom:6px;">${ill.name}</h3>
+          <span class="tag">${ill.category}</span>
+          <p style="margin-top:10px;font-size:0.82rem;">Key symptoms: ${ill.symptoms.slice(0,3).join(', ')}</p>
+          <p style="font-size:0.8rem;color:var(--primary);margin-top:10px;font-weight:500;">Tap to learn more →</p>
+        </div>
+      `).join('');
+    }
+
+    function setFilter(category, btn) {
+      currentFilter = category;
+      document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      renderIllnesses();
+    }
+
+    function filterIllnesses() {
+      currentSearch = document.getElementById('illnessSearch').value.toLowerCase().trim();
+      renderIllnesses();
+    }
+
+    function openModal(id) {
+      const ill = healthData.illnesses.find(i => i.id === id);
+      if (!ill) return;
+      document.getElementById('modalContent').innerHTML = `
+        <div style="font-size:2.5rem;margin-bottom:10px;">${ill.emoji}</div>
+        <h2 style="color:var(--primary-dark);margin-bottom:4px;">${ill.name}</h2>
+        <div style="display:flex;gap:8px;margin-bottom:18px;flex-wrap:wrap;">
+          <span class="tag">${ill.category}</span>
+          <span style="font-size:0.75rem;font-weight:600;color:${severityColor[ill.severity]};background:${severityColor[ill.severity]}18;padding:4px 10px;border-radius:20px;">${ill.severity}</span>
+        </div>
+        <div style="background:var(--light-bg);border-radius:10px;padding:14px;margin-bottom:14px;">
+          <strong style="font-size:0.85rem;color:var(--primary-dark);">🔴 Symptoms</strong>
+          <ul style="margin-top:8px;padding-left:18px;">${ill.symptoms.map(s=>`<li style="font-size:0.875rem;color:var(--text-mid);margin-bottom:4px;">${s}</li>`).join('')}</ul>
+        </div>
+        <div style="background:var(--light-bg);border-radius:10px;padding:14px;margin-bottom:14px;">
+          <strong style="font-size:0.85rem;color:var(--primary-dark);">🔬 Causes</strong>
+          <p style="margin-top:6px;font-size:0.875rem;color:var(--text-mid);">${ill.causes}</p>
+        </div>
+        <div style="background:var(--light-bg);border-radius:10px;padding:14px;margin-bottom:14px;">
+          <strong style="font-size:0.85rem;color:var(--primary-dark);">💊 Treatment</strong>
+          <p style="margin-top:6px;font-size:0.875rem;color:var(--text-mid);">${ill.treatment}</p>
+        </div>
+        <div style="background:var(--light-bg);border-radius:10px;padding:14px;">
+          <strong style="font-size:0.85rem;color:var(--primary-dark);">🛡️ Prevention</strong>
+          <p style="margin-top:6px;font-size:0.875rem;color:var(--text-mid);">${ill.prevention}</p>
+        </div>
+        <p style="font-size:0.75rem;color:#aaa;margin-top:14px;text-align:center;">⚠️ For educational purposes only. Consult a doctor.</p>
+      `;
+      const modal = document.getElementById('modal');
+      modal.style.display = 'flex';
+      document.body.style.overflow = 'hidden';
+    }
+
+    function closeModal() {
+      document.getElementById('modal').style.display = 'none';
+      document.body.style.overflow = '';
+    }
+
+    document.getElementById('modal').addEventListener('click', function(e) {
+      if (e.target === this) closeModal();
+    });
+
+    renderIllnesses();
+  </script>
+</body>
+</html>

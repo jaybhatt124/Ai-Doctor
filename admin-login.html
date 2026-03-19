@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Admin Login - AI Doctor Analysis</title>
+  <link rel="stylesheet" href="css/style.css" />
+  <style>
+    body { background: linear-gradient(135deg, var(--primary-dark) 0%, var(--primary) 60%, var(--secondary) 100%); min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 20px; }
+    .login-card { background: white; border-radius: 20px; padding: 40px 36px; width: 100%; max-width: 400px; box-shadow: 0 20px 60px rgba(0,60,80,0.35); }
+    .login-logo { text-align: center; margin-bottom: 28px; }
+    .login-logo .brand-icon { width: 64px; height: 64px; margin: 0 auto 12px; border-radius: 18px; }
+    .login-logo .brand-icon svg { width: 38px; height: 38px; }
+    .login-title { font-size: 1.4rem; font-weight: 700; color: var(--primary-dark); text-align: center; margin-bottom: 6px; }
+    .login-sub { font-size: 0.85rem; color: var(--text-light); text-align: center; margin-bottom: 28px; }
+    .error-msg { background: #fdecea; color: #c62828; border-radius: 8px; padding: 10px 14px; font-size: 0.85rem; margin-bottom: 14px; display: none; }
+  </style>
+</head>
+<body>
+
+  <div class="login-card">
+    <div class="login-logo">
+      <div class="brand-icon" style="background:linear-gradient(135deg,var(--primary),var(--secondary));display:flex;align-items:center;justify-content:center;">
+        <svg viewBox="0 0 24 24" fill="white" xmlns="http://www.w3.org/2000/svg">
+          <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 14H9V8h2v8zm4 0h-2V8h2v8z"/>
+        </svg>
+      </div>
+      <div class="login-title">Admin Login</div>
+      <div class="login-sub">AI Doctor Analysis — Restricted Access</div>
+    </div>
+
+    <div class="error-msg" id="errorMsg">❌ Invalid username or password. Please try again.</div>
+
+    <div class="form-group">
+      <label for="username">Username</label>
+      <input type="text" id="username" placeholder="Enter admin username" autocomplete="username" />
+    </div>
+    <div class="form-group">
+      <label for="password">Password</label>
+      <input type="password" id="password" placeholder="Enter password" autocomplete="current-password" />
+    </div>
+
+    <button onclick="doLogin()" class="btn" style="background:var(--primary);color:white;width:100%;justify-content:center;margin-top:8px;font-size:0.95rem;">
+      🔐 Login
+    </button>
+
+    <p style="text-align:center;margin-top:18px;font-size:0.82rem;color:var(--text-light);">
+      <a href="index.html" style="color:var(--primary);text-decoration:none;">← Back to Main Site</a>
+    </p>
+  </div>
+
+  <script>
+    document.addEventListener('keydown', function(e) {
+      if (e.key === 'Enter') doLogin();
+    });
+
+    function doLogin() {
+      const user = document.getElementById('username').value.trim();
+      const pass = document.getElementById('password').value;
+      const err  = document.getElementById('errorMsg');
+
+      // Demo credentials only — replace with real auth in production
+      if (user === 'admin' && pass === 'admin123') {
+        window.location.href = 'admin.html';
+      } else {
+        err.style.display = 'block';
+        document.getElementById('password').value = '';
+        setTimeout(() => { err.style.display = 'none'; }, 4000);
+      }
+    }
+  </script>
+</body>
+</html>

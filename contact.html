@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Contact - AI Doctor Analysis</title>
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+
+  <div class="nav-overlay" id="navOverlay"></div>
+
+  <nav class="navbar">
+    <div class="navbar-container">
+      <a href="index.html" class="navbar-brand">
+        <div class="brand-icon">
+          <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 14H9V8h2v8zm4 0h-2V8h2v8z"/>
+          </svg>
+        </div>
+        <div class="brand-text">
+          <span class="brand-name">AI Doctor Analysis</span>
+          <span class="brand-tagline">Smart Health Education</span>
+        </div>
+      </a>
+      <button class="hamburger" id="hamburger" aria-label="Toggle menu" aria-expanded="false">
+        <span></span><span></span><span></span>
+      </button>
+      <ul class="navbar-links" id="navLinks">
+        <li><a href="index.html">🏠 Home</a></li>
+        <li><a href="about.html">ℹ️ About</a></li>
+        <li><a href="illness.html">🩺 Illness Info</a></li>
+        <li><a href="tips.html">💡 Health Tips</a></li>
+        <li><a href="contact.html">📬 Contact</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <main class="page-content">
+
+    <div class="page-header">
+      <h1>📬 Contact Us</h1>
+      <p>Have a question or suggestion? We'd love to hear from you.</p>
+    </div>
+
+    <section class="section">
+      <div class="container">
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:28px;align-items:start;" id="contactGrid">
+
+          <!-- Contact Form -->
+          <div class="card" style="padding:28px;">
+            <h2 style="font-size:1.2rem;color:var(--primary-dark);margin-bottom:20px;">✉️ Send a Message</h2>
+
+            <div class="form-group">
+              <label for="name">Full Name</label>
+              <input type="text" id="name" placeholder="Your full name" />
+            </div>
+            <div class="form-group">
+              <label for="email">Email Address</label>
+              <input type="email" id="email" placeholder="your@email.com" />
+            </div>
+            <div class="form-group">
+              <label for="subject">Subject</label>
+              <select id="subject">
+                <option value="">Select a topic...</option>
+                <option value="general">General Inquiry</option>
+                <option value="feedback">Feedback / Suggestion</option>
+                <option value="medical">Medical Information Question</option>
+                <option value="bug">Report an Issue</option>
+                <option value="other">Other</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="message">Message</label>
+              <textarea id="message" placeholder="Write your message here..."></textarea>
+            </div>
+
+            <button onclick="submitForm()" class="btn btn-primary" style="background:var(--primary);color:white;width:100%;justify-content:center;">
+              📤 Send Message
+            </button>
+
+            <div id="formSuccess" style="display:none;margin-top:16px;background:#e8f5e9;border-radius:10px;padding:14px;text-align:center;color:#2e7d32;font-size:0.9rem;font-weight:500;">
+              ✅ Message sent successfully! We'll get back to you within 24 hours.
+            </div>
+          </div>
+
+          <!-- Info Cards -->
+          <div style="display:flex;flex-direction:column;gap:16px;">
+            <div class="card">
+              <div class="card-icon">⏰</div>
+              <h3>Response Time</h3>
+              <p>We typically respond to all inquiries within 24–48 hours on business days.</p>
+            </div>
+            <div class="card">
+              <div class="card-icon">🚨</div>
+              <h3>Medical Emergencies</h3>
+              <p>This is NOT a medical service. For emergencies, call your local emergency number (112 / 911) immediately.</p>
+            </div>
+            <div class="card">
+              <div class="card-icon">💬</div>
+              <h3>Feedback Welcome</h3>
+              <p>Help us improve! Share suggestions for new illness profiles, features, or health tips you'd like to see.</p>
+            </div>
+
+            <!-- Quick Links -->
+            <div style="background:var(--primary-light);border-radius:var(--border-radius);padding:20px;">
+              <h3 style="color:var(--primary-dark);margin-bottom:12px;font-size:0.95rem;">🔗 Quick Links</h3>
+              <div style="display:flex;flex-direction:column;gap:8px;">
+                <a href="illness.html" style="color:var(--primary);font-size:0.875rem;text-decoration:none;font-weight:500;">🩺 Browse Illness Database →</a>
+                <a href="tips.html" style="color:var(--primary);font-size:0.875rem;text-decoration:none;font-weight:500;">💡 Read Health Tips →</a>
+                <a href="about.html" style="color:var(--primary);font-size:0.875rem;text-decoration:none;font-weight:500;">ℹ️ Learn About Us →</a>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <footer>
+    <p>&copy; 2025 AI Doctor Analysis &mdash; <a href="about.html">About</a> &bull; <a href="contact.html">Contact</a></p>
+  </footer>
+
+  <script src="js/data.js"></script>
+  <script src="js/navbar.js"></script>
+  <script>
+    // Responsive grid
+    const grid = document.getElementById('contactGrid');
+    function adjustGrid() {
+      grid.style.gridTemplateColumns = window.innerWidth < 768 ? '1fr' : '1fr 1fr';
+    }
+    adjustGrid();
+    window.addEventListener('resize', adjustGrid);
+
+    function submitForm() {
+      const name    = document.getElementById('name').value.trim();
+      const email   = document.getElementById('email').value.trim();
+      const subject = document.getElementById('subject').value;
+      const message = document.getElementById('message').value.trim();
+
+      if (!name || !email || !subject || !message) {
+        alert('Please fill in all fields before sending.');
+        return;
+      }
+      if (!email.includes('@') || !email.includes('.')) {
+        alert('Please enter a valid email address.');
+        return;
+      }
+
+      // Simulate form submission
+      document.getElementById('formSuccess').style.display = 'block';
+      document.getElementById('name').value = '';
+      document.getElementById('email').value = '';
+      document.getElementById('subject').value = '';
+      document.getElementById('message').value = '';
+
+      setTimeout(() => {
+        document.getElementById('formSuccess').style.display = 'none';
+      }, 5000);
+    }
+  </script>
+</body>
+</html>
